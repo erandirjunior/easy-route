@@ -6,7 +6,7 @@
 
 ## Instalação
 ```json
-composer require easy-route/easy-route
+composer require easy-route/easy-route "v1.0"
 ``` 
 
 ## Definindo rotas
