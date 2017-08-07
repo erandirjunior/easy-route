@@ -3,7 +3,11 @@
 ## Requisitos
 * PHP 7.0 >=
 * Composer 
- 
+
+## Instalação
+```json
+composer require easy-route/easy-route
+``` 
 
 ## Definindo rotas
 > Declare o namespace de rotas no arquivo desejado.
