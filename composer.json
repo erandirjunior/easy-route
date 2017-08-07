@@ -1,0 +1,19 @@
+{
+  "name": "easy-route/easy-route",
+  "description": "Easy router for PHP",
+  "authors": [{
+    "name": "Antonio Erandir Feitosa Soares Junior",
+    "email": "aefs12junior@gmail.com"
+  }],
+  "license": "MIT",
+  "type": "library",
+  "version" : "v1.0",
+  "autoload": {
+    "psr-4": {
+      "EasyRoute\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=7.0"
+  }
+}
