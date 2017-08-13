@@ -52,12 +52,12 @@ class Bootstrap
     /**
      * Recebe os valores das rotas.
      *
-     * @param $routes string
+     * @param $route string
      * @param $callback string
      */
-    public static function setRoutes($routes, $callback, $type)
+    public static function addRoute($route, $callback, $type)
     {
-        self::$routes[] = ['route' => $routes, 'callback' => $callback, 'type' => $type];
+        self::$routes[] = ['route' => $route, 'callback' => $callback, 'type' => $type];
     }
 
     /**
