@@ -13,9 +13,9 @@ class Route
      *
      * @param array $post
      */
-    public static function post($routes, $callback)
+    public static function post($route, $callback)
     {
-        Bootstrap::setRoutes($routes, $callback, 'POST');
+        Bootstrap::addRoute($route, $callback, 'POST');
     }
 
     /**
@@ -25,7 +25,7 @@ class Route
      */
     public static function get($route, $callback)
     {
-        Bootstrap::setRoutes($route, $callback, 'GET');
+        Bootstrap::addRoute($route, $callback, 'GET');
     }
 
     /**
