@@ -3,19 +3,26 @@
 namespace EasyRoute;
 
 /**
- * Class Route
+ * Class EasyRoute
  * @package EasyRoute
  */
-class Route
+class EasyRoute
 {
+    private $easyRouteConfig;
+
+    public function __construct($namespace)
+    {
+        $this->easyRouteConfig = new EasyRouteConfig($namespace);
+    }
+
     /**
      * Recebe as requisições post.
      *
      * @param array $post
      */
-    public static function post($route, $callback)
+    public function post($route, $callback)
     {
-        Bootstrap::addRoute($route, $callback, 'POST');
+        $this->easyRouteConfig->addRoute($route, $callback, 'POST');
     }
 
     /**
@@ -23,18 +30,18 @@ class Route
      *
      * @param array $get
      */
-    public static function get($route, $callback)
+    public function get($route, $callback)
     {
-        Bootstrap::addRoute($route, $callback, 'GET');
+        $this->easyRouteConfig->addRoute($route, $callback, 'GET');
     }
 
     /**
-     * Cria uma instancia de Bootstrap.
+     * Cria uma instancia de EasyRoute.
      *
      * @param $namespace
      */
-    public static function on($namespace)
+    public function on()
     {
-        new Bootstrap($namespace);
+        $this->easyRouteConfig->run();
     }
 }

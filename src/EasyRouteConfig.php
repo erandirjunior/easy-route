@@ -3,17 +3,17 @@
 namespace EasyRoute;
 
 /**
- * Class Bootstrap
+ * Class EasyRouteConfig
  * @package Core\ServiceRoutes
  */
-class Bootstrap
+class EasyRouteConfig
 {
     /**
-     * Recebe as rotas.
+     * Receive routes.
      *
      * @var array
      */
-    private static $routes;
+    private $routes;
 
     /**
      * Recebe os valores da url que são dinâmicas nas rotas.
@@ -23,14 +23,15 @@ class Bootstrap
     private $piecesUrl;
 
     /**
-     * Rebece o número de erros por url não encontrada.
+     * Receivethe number
+     * Get the number of errors per url not found.
      *
      * @var int
      */
     private $urlError;
 
     /**
-     * Recebe o namespace.
+     * Receive the namespace.
      *
      * @var string
      */
@@ -39,14 +40,13 @@ class Bootstrap
     private $matches;
 
     /**
-     * Bootstrap constructor.
+     * EasyRoute constructor.
      *
      * @param $namespace
      */
     public function __construct($namespace)
     {
         $this->namespace = $namespace;
-        $this->index($this->getUrl());
     }
 
     /**
@@ -55,29 +55,28 @@ class Bootstrap
      * @param $route string
      * @param $callback string
      */
-    public static function addRoute($route, $callback, $type)
+    public function addRoute($route, $callback, $type)
     {
-        self::$routes[] = ['route' => $route, 'callback' => $callback, 'type' => $type];
+        $this->routes[] = ['route' => $route, 'callback' => $callback, 'type' => $type];
     }
 
     /**
      * @param string $url
-     *
      * @see isDynamicRoute
-     * @see treatDynamicRoute
-     * @see run
+     * @see processRoutes
+     * @see execute
      * @see countError
      */
     private function index(string $url)
     {
         try {
-            array_walk(self::$routes, function ($route) use ($url) {
-                if ($this->isDynamicRoute($route['route'])) {
-                    $this->treatDynamicRoute($route, $url);
+            array_walk($this->routes, function ($route) use ($url) {
+                if ($this->isDynamic($route['route'])) {
+                    $this->processRoutes($route, $url);
                 } else {
-                    $this->run($url, $route);
+                    $this->execute($url, $route);
                 }
-                $this->countError(self::$routes);
+                $this->countError($this->routes);
             });
         } catch (\Exception $e) {
             echo $e->getMessage();
@@ -91,10 +90,10 @@ class Bootstrap
      *
      * @return bool
      */
-    private function isDynamicRoute($route)
+    private function isDynamic($route)
     {
-        $valueRegex    = preg_match_all('/\/\{[a-z]+\}\/?/', $route, $matches);
-        return $valueRegex > 0 ? true : false;
+        preg_match_all('({.+?}/?)', $route, $this->matches);
+        return count($this->matches[0]) > 0 ? true : false;
     }
 
     /**
@@ -103,18 +102,16 @@ class Bootstrap
      * @param array $route
      * @param string $url
      *
-     * @see run
+     * @see execute
      */
-    private function treatDynamicRoute($route, $url)
+    private function processRoutes($route, $url)
     {
-        preg_match_all('/\/\{[a-z]+\}\/?/', $route['route'], $matches);
-
         $route['route'] = str_replace(['{', '}'], '', $route['route']);
-        $urlArray       = explode('/', $url);
-        $routeArray     = explode('/', $route['route']);
+        $urlArray = explode('/', $url);
+        $routeArray = explode('/', $route['route']);
 
-        $matches        = $this->cleanMatche($matches);
-        $indice         = $this->valueIndiceRoute($routeArray, $matches);
+        $this->matches = $this->cleanMatch($this->matches);
+        $indice = $this->valueIndiceRoute($routeArray);
 
         foreach ($routeArray as $k => $v) {
             if (empty($urlArray[$k])) {
@@ -122,7 +119,7 @@ class Bootstrap
             }
 
             if ($v != $urlArray[$k] && $indice[$k] == $v) {
-                $urlValues[]       = $urlArray[$k];
+                $urlValues[] = $urlArray[$k];
                 $this->piecesUrl[] = $urlArray[$k];
                 continue;
             }
@@ -132,7 +129,7 @@ class Bootstrap
 
         $route['route'] = implode('/', $urlValues);
 
-        $this->run($url, $route);
+        $this->execute($url, $route);
     }
 
     /**
@@ -142,7 +139,7 @@ class Bootstrap
      *
      * @return mixed
      */
-    private function cleanMatche($matches)
+    private function cleanMatch($matches)
     {
         foreach ($matches[0] as $k => $v) {
             $matches[$k] = str_replace(['/{', '{', '}', '}/', '/'], '', $v);
@@ -159,15 +156,16 @@ class Bootstrap
      *
      * @return mixed
      */
-    private function valueIndiceRoute($routeArray, $matches)
+    private function valueIndiceRoute($routeArray)
     {
-        foreach ($routeArray as $k => $v) {
+        $matches = $this->matches;
+        array_walk($routeArray, function ($k, $v) use ($matches, &$indice) {
             foreach ($matches as $j => $value) {
-                if ($routeArray[$k] == $value) {
-                    $indice[$k] = $v;
+                if ($k == $value) {
+                    $indice[$v] = $k;
                 }
             }
-        }
+        });
 
         return $indice;
     }
@@ -178,11 +176,11 @@ class Bootstrap
      * Invoca um criador de objetos.
      *
      * @param string $url
-     * @param array  $route
+     * @param array $route
      *
      * @return mixed
      */
-    private function run(string $url, array $route)
+    private function execute(string $url, array $route)
     {
         if ($url === $route['route']) {
             if (is_callable($route['callback']) && $route['type'] === 'GET') {
@@ -190,14 +188,19 @@ class Bootstrap
             }
 
             $callback = explode(".", $route['callback']);
-            $class    = $callback[0];
-            $method   = $callback[1];
+            $class = $callback[0];
+            $method = $callback[1];
             $instance = $this->createInstance($class);
 
-            $this->action($instance, $method);
-        } else {
-            $this->urlError++;
+            return $this->action($instance, $method);
         }
+
+        $this->urlError++;
+    }
+
+    public function run()
+    {
+        $this->index($this->getUrl());
     }
 
     /**
@@ -210,10 +213,10 @@ class Bootstrap
      */
     private function createInstance($class)
     {
-        $class = $this->namespace.ucfirst($class);
+        $class = $this->namespace . ucfirst($class);
 
         if (!class_exists($class)) {
-            throw new \Exception("Error: class $class does not exist. Check the name of your ");
+            throw new \Exception("Error: class {$class} does not exist. Check the name of your ");
         }
 
         $instance = new $class;
