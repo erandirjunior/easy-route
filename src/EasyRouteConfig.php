@@ -236,8 +236,7 @@ class EasyRouteConfig
     private function action($instance, $method)
     {
         if (method_exists($instance, $method)) {
-            $instance->$method();
-            //exit();
+            $instance->$method($this->piecesUrl);
         } else {
             throw new \Exception("Error: method $method does not exist. Check the name of your method.");
         }
