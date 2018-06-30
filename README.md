@@ -6,59 +6,56 @@
 
 ## Instalação
 ```bash
-$ composer require easy-route/easy-route "v1.0"
+$ composer require easy-route/easy-route "v2.0"
 ``` 
 
 ## Definindo rotas
-> Declare o namespace de rotas no arquivo desejado.
+> Crie uma objeto do tipo EasyRoute e passe um namespace por parâmetro.
 ```php
-use EasyRoute\Route;
+use \EasyRoute\EasyRoute;
+
+$route = new EasyRoute('\\Seu\\Namespace\\');
 ``` 
 
 ## Adicionando rotas
 > Rotas do tipo **GET**
 ```php
-Route::get('/', 'HomeController.index');
+$route->get('/', 'PessoaController.index');
 ```
 
 > Rotas do tipo **POST**
 ```php
-Route::post('/', 'HomeController.index');
+$route->post('/', 'PessoaController.index');
 ```
 
-Abaixo de todas as rotas definidas, adicionar a seguinte comando passando o namespace do seu controller:
+Abaixo de todas as rotas definidas, chame o método `on()` da classe EasyRoute para a execução das rotas.
 ```php
-Route::on('\\Seu\Namespace\\');
-```
-
-Caso queira deixar seu arquivo de rotas separado, faça a inclusão do seu arquivo de rotas e depois insira os códigos abaixo:
-```php
-use EasyRoute\Bootstrap;
-
-new Bootstrap('\\Seu\Namespace\\');
+$route->on();
 ```
 
 ## Definindo rotas dinâmicas
 ```php
-Route::get('/php/{word}/functions', 'Teste.index');
+$route->get('/{exemplo}', function() {
+    echo 'Exemplo de funcionamento de rota dinâmica';
+});
 ```
 ## Trabalhando com callback
 > Rota simples
 ```php
-Route::get('/teste', function () {
-    echo "dados";
+$route->get('/teste/{exemplo}', function() {
+    echo 'Exemplo de funcionamento de rota dinâmica';
 });
 ``` 
 > Rota dinâmica
 ```php
-Route::get('/home/{teste}', function () {
+Route::get('/home/{teste}', function() {
     echo "rota dinâmica";
 });
 ```
 ## Obtendo dados da url
 ```php
-Route::get('/home/{teste}', function ($teste) {
-    var_dump($teste);
+$route->get('/teste/{exemplo}', function($dados) {
+    var_dump($dados);
 });
 ```
-Onde `$teste` é um array de valores dinâmicos da url.
+Onde `$dados` é um array de valores dinâmicos da url.
