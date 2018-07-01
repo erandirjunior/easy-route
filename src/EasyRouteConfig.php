@@ -55,9 +55,9 @@ class EasyRouteConfig
      * @param $route string
      * @param $callback string
      */
-    public function addRoute($route, $callback, $type)
+    public function setRoutes($routes)
     {
-        $this->routes[] = ['route' => $route, 'callback' => $callback, 'type' => $type];
+        $this->routes = $routes;
     }
 
     /**

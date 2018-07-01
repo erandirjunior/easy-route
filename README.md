@@ -48,7 +48,7 @@ $route->get('/teste/{exemplo}', function() {
 ``` 
 > Rota dinâmica
 ```php
-Route::get('/home/{teste}', function() {
+Route->get('/home/{teste}', function() {
     echo "rota dinâmica";
 });
 ```
@@ -59,3 +59,16 @@ $route->get('/teste/{exemplo}', function($dados) {
 });
 ```
 Onde `$dados` é um array de valores dinâmicos da url.
+
+## Grupo de rotas
+```php
+$route->group('/noticias', function($route) {
+    $route->get('/esporte', function() {
+        echo 'noticias sobre esporte';
+    });
+
+    $route->get('/tecnologia', function() {
+        echo 'noticias sobre tecnologia';
+    });
+});
+```
