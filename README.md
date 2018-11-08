@@ -1,5 +1,7 @@
 # easy-route
 
+# DEPRECIADO, USE O [PlugRoute](https://github.com/erandirjunior/plug-route)
+
 ## Requisitos
 * PHP 7.0 >=
 * Composer 
